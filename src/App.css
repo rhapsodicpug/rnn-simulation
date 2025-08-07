@@ -1,0 +1,382 @@
+/* --- Step 1: Define Color Variables for Both Themes --- */
+:root {
+  --accent: #00e5ff;
+  --accent-dark: #00b8d4;
+  --success: #2dd4bf;
+  --warning: #ffc107;
+  --danger: #f44336;
+
+  /* Dark Theme (Default) */
+  --bg: #0d1117;
+  --panel-bg: #161b22;
+  --border: #30363d;
+  --text-primary: #c9d1d9;
+  --text-secondary: #8b949e;
+  --sidebar-bg: linear-gradient(180deg, rgba(22, 27, 34, 0.7) 0%, rgba(13, 17, 23, 0.6) 100%);
+  --button-hover-shadow: rgba(0, 229, 255, 0.2);
+}
+
+[data-theme="light"] {
+  /* Light Theme Overrides */
+  --bg: #f6f8fa;
+  --panel-bg: #ffffff;
+  --border: #d0d7de;
+  --text-primary: #24292f;
+  --text-secondary: #57606a;
+  --sidebar-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(246, 248, 250, 0.6) 100%);
+  --button-hover-shadow: rgba(0, 229, 255, 0.3);
+}
+
+/* --- Step 2: Update Base and App Layout Styles --- */
+* {
+  box-sizing: border-box;
+}
+body {
+  background-color: var(--bg);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+  margin: 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+.main-container {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  height: 100vh;
+  overflow: hidden;
+}
+.main-content {
+  overflow-y: auto;
+  position: relative;
+  background-color: transparent; /* Allow body background to show through */
+  display: flex;
+  flex-direction: column;
+}
+.main-content::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(var(--border) 1px, transparent 0);
+  background-size: 25px 25px;
+  animation: bg-pan 30s linear infinite;
+  z-index: -1;
+  opacity: 0.5;
+}
+@keyframes bg-pan {
+  from { background-position: 0 0; }
+  to { background-position: -400px -400px; }
+}
+.content-inner-wrapper {
+  position: relative;
+  z-index: 1;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- Step 3: Sidebar Styles (Corrected Aurora Effect) --- */
+.sidebar {
+  background: var(--sidebar-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  border-right: 1px solid var(--border);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  
+  /* Positioning context for the aurora */
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* Aurora Blobs */
+.sidebar::before,
+.sidebar::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0;
+}
+
+/* First blob (Cyan) */
+.sidebar::before {
+  background-color: var(--accent);
+  top: -50px;
+  left: -100px;
+  animation: move-aurora-1 25s infinite;
+}
+
+/* Second blob (Magenta) */
+.sidebar::after {
+  background-color: #ff00c1;
+  bottom: -50px;
+  right: -100px;
+  animation: move-aurora-2 25s infinite;
+  animation-delay: -12.5s;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+}
+.theme-toggle {
+  background-color: var(--panel-bg);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.4); /* Readability */
+}
+.theme-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.header {
+  padding: 0.5rem;
+}
+.header-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -1px;
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Readability */
+}
+.header-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Readability */
+}
+.tab-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.tab-button {
+  background: none;
+  border: 1px solid transparent;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  text-align: left;
+  text-decoration: none;
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.4); /* Readability */
+}
+.tab-button:hover {
+  background-color: var(--panel-bg);
+  color: var(--text-primary);
+}
+.tab-button.is-active {
+  color: var(--text-primary);
+  background-color: var(--panel-bg);
+  font-weight: 500;
+  box-shadow: 0 0 20px -5px var(--accent); /* Active Glow */
+}
+.tab-button.is-active .icon {
+  color: var(--accent);
+}
+
+/* --- Step 4: Component Styles --- */
+
+.simulation-layout { display: grid; grid-template-rows: auto 1fr; gap: 2rem; height: 100%; padding: 2.5rem; }
+.simulation-controls { display: flex; flex-direction: column; gap: 1.5rem; max-width: 500px; }
+.viz-wrapper { position: relative; width: 100%; height: 100%; }
+.control-group { display: flex; flex-direction: column; gap: 0.75rem; }
+.control-label { font-size: 0.8rem; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; padding-left: 0.25rem; }
+.input, .textarea, .select select, .output-box { background-color: var(--panel-bg); border: 1px solid var(--border); color: var(--text-primary); border-radius: 6px; padding: 0.75rem; font-size: 1rem; width: 100%; transition: all 0.2s ease; -webkit-appearance: none; }
+.input:focus, .textarea:focus, .select select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--button-hover-shadow); outline: none; }
+.select { position: relative; }
+.select::after { content: '▼'; position: absolute; top: 50%; right: 1rem; transform: translateY(-50%); pointer-events: none; color: var(--text-secondary); font-size: 0.8rem; }
+.language-controls { display: grid; grid-template-columns: 1fr auto 1fr; gap: 0.75rem; align-items: center; }
+.swap-button { background-color: var(--panel-bg); border: 1px solid var(--border); color: var(--text-secondary); height: 46px; width: 46px; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; flex-shrink: 0; }
+.swap-button:hover { color: var(--accent); border-color: var(--accent); }
+.textarea { font-family: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', monospace; resize: vertical; }
+.output-box { color: var(--accent); font-weight: 500; background-color: var(--panel-bg); border: 1px solid var(--border); }
+.button { background-image: linear-gradient(to right, var(--accent-dark), var(--accent)); border: none; color: #000; font-weight: 600; font-size: 1rem; padding: 0.8rem 1.5rem; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.3s ease; }
+.button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--button-hover-shadow); }
+.button.is-secondary { background: var(--panel-bg); color: var(--text-primary); border: 1px solid var(--border); }
+.button.is-secondary:hover { border-color: var(--text-secondary); color: var(--text-primary); }
+.button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+.button-group { display: flex; gap: 1rem; }
+.api-key-notice, .error-notice { padding: 0.75rem; border-radius: 6px; font-size: 0.9rem; }
+.api-key-notice { background-color: rgba(255, 193, 7, 0.1); border: 1px solid rgba(255, 193, 7, 0.3); color: var(--warning); }
+.api-key-notice a { color: var(--accent); text-decoration: none; font-weight: 500;}
+.error-notice { background-color: rgba(244, 67, 54, 0.1); border: 1px solid rgba(244, 67, 54, 0.3); color: var(--danger); }
+.viz-panel { position: relative; width: 100%; height: 100%; }
+.phase-description { position: absolute; top: 0; left: 50%; transform: translateX(-50%); background-color: var(--panel-bg); color: var(--text-secondary); padding: 0.5rem 1rem; border-radius: 6px; border: 1px solid var(--border); font-size: 0.9rem; z-index: 10; }
+.viz-columns { display: flex; justify-content: space-around; align-items: flex-start; height: 100%; }
+.viz-column { display: flex; flex-direction: column; align-items: center; gap: 2rem; z-index: 5; }
+.viz-title { font-size: 1.25rem; font-weight: 500; color: var(--text-primary); }
+.viz-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+.tokens-container { display: flex; flex-direction: column; gap: 1rem; }
+.simulation-step { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; border-radius: 8px; }
+.token-text { font-family: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', monospace; width: 8rem; text-align: center; color: var(--text-secondary); }
+.arrow-icon { color: #444; }
+.context-vector-container { position: absolute; top: 3.5rem; left: 50%; transform: translateX(-50%); z-index: 1; }
+.context-vector-content { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; border-radius: 8px; padding: 0.5rem; }
+.lstm-cell { border: 1px solid var(--border); border-radius: 8px; padding: 1rem; width: 12rem; height: 10rem; display: flex; flex-direction: column; justify-content: space-around; align-items: center; position: relative; background-color: var(--panel-bg); transition: border-color 0.3s, box-shadow 0.3s; }
+.lstm-title { position: absolute; top: -0.8rem; background-color: var(--bg); padding: 0 0.5rem; font-size: 0.8rem; color: var(--accent); }
+.lstm-gates { display: flex; justify-content: space-between; width: 100%; gap: 0.25rem; }
+.gate { background-color: var(--bg); border: 1px solid var(--border); color: var(--text-secondary); border-radius: 4px; padding: 0.25rem 0.5rem; font-size: 0.7rem; }
+.cell-state { background-color: rgba(59, 130, 246, 0.1); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 9999px; padding: 0.25rem 1rem; margin: 0.25rem 0; font-size: 0.8rem; }
+.vector-container { background-color: rgba(0,0,0,0.3); border-radius: 6px; }
+.content-text { max-width: 800px; padding: 2.5rem; width: 100%; margin: 0 auto; }
+.content-text h2 { font-size: 1.75rem; font-weight: 600; color: var(--text-primary); border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 1.5rem; }
+.content-text h3 { font-size: 1.2rem; font-weight: 600; color: var(--accent); margin-top: 1.5rem; margin-bottom: 0.5rem; }
+.content-text p, .content-text li { color: var(--text-secondary); line-height: 1.7; font-size: 1rem; }
+.content-text strong { color: var(--text-primary); }
+.content-text .highlight { color: var(--accent); font-weight: 600; }
+.content-text ul { padding-left: 1.5rem; }
+.faq-item { border-bottom: 1px solid var(--border); }
+.faq-question { cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; font-size: 1.1rem; font-weight: 500; transition: color 0.2s ease; }
+.faq-question:hover { color: var(--accent); }
+.faq-answer { overflow: hidden; }
+.faq-answer p { padding-bottom: 1rem; color: var(--text-secondary); line-height: 1.6; margin: 0; }
+.animate-spin { animation: spin 1s linear infinite; }
+.controls-wrapper { display: flex; flex-direction: column; gap: 1.5rem; background-color: var(--panel-bg); padding: 1rem; border-radius: 8px; border: 1px solid var(--border); }
+.speed-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; background: var(--border); border-radius: 5px; outline: none; opacity: 0.7; transition: opacity .2s; }
+.speed-slider:hover { opacity: 1; }
+.speed-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; background: var(--accent); cursor: pointer; border-radius: 50%; border: 2px solid var(--panel-bg); }
+.speed-slider::-moz-range-thumb { width: 18px; height: 18px; background: var(--accent); cursor: pointer; border-radius: 50%; border: 2px solid var(--panel-bg); }
+.app-tooltip { background-color: var(--accent) !important; color: #000 !important; font-size: 0.85rem !important; font-weight: 500 !important; border-radius: 6px !important; padding: 0.4rem 0.8rem !important; max-width: 250px !important; z-index: 9999 !important; }
+.app-tooltip .react-tooltip-arrow { display: none !important; }
+.quiz-container { background-color: var(--panel-bg); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; }
+.quiz-progress { font-size: 0.9rem; font-weight: 500; color: var(--text-secondary); margin-bottom: 1.5rem; }
+.quiz-question { font-size: 1.4rem; color: var(--text-primary); margin-bottom: 2rem; line-height: 1.5; }
+.quiz-options { display: flex; flex-direction: column; gap: 1rem; }
+.quiz-option-button { background-color: transparent; border: 1px solid var(--border); color: var(--text-secondary); border-radius: 8px; padding: 1rem; font-size: 1rem; text-align: left; cursor: pointer; transition: all 0.2s ease; display: flex; justify-content: space-between; align-items: center; }
+.quiz-option-button:not(:disabled):hover { border-color: var(--accent); color: var(--accent); }
+.quiz-option-button.correct { border-color: var(--success) !important; background-color: rgba(45, 212, 191, 0.1) !important; color: var(--success) !important; font-weight: 600; }
+.quiz-option-button.incorrect { border-color: var(--danger) !important; background-color: rgba(244, 67, 54, 0.1) !important; color: var(--danger) !important; font-weight: 600; }
+.quiz-option-button:disabled { cursor: not-allowed; }
+.quiz-feedback { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 1.5rem; align-items: flex-start; }
+.quiz-feedback p { color: var(--text-secondary); line-height: 1.6; }
+.quiz-results { text-align: center; background-color: var(--panel-bg); border: 1px solid var(--border); border-radius: 12px; padding: 3rem; display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+.results-icon { color: var(--accent); }
+.results-score { font-size: 1.2rem; color: var(--text-primary); margin-bottom: 1rem; }
+
+/* --- Keyframe Animations --- */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes move-aurora-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.3; }
+  25% { transform: translate(150px, 100px) scale(1.2); opacity: 0.7; }
+  50% { transform: translate(50px, 250px) scale(0.9); opacity: 0.4; }
+  75% { transform: translate(-100px, 150px) scale(1.1); opacity: 0.6; }
+}
+
+@keyframes move-aurora-2 {
+  0%, 100% { transform: translate(0, 0) scale(1.2); opacity: 0.7; }
+  25% { transform: translate(-150px, -100px) scale(1); opacity: 0.4; }
+  50% { transform: translate(-50px, -250px) scale(1.3); opacity: 0.6; }
+  75% { transform: translate(100px, -150px) scale(0.9); opacity: 0.5; }
+}
+/* --- Collapsible Sidebar Styles --- */
+
+/* 1. Use a CSS variable for the sidebar width */
+.main-container {
+  --sidebar-width: 320px;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  transition: grid-template-columns 0.3s ease-in-out;
+}
+
+/* 2. When collapsed, shrink the width */
+.main-container.sidebar-collapsed {
+  --sidebar-width: 80px;
+}
+
+/* 3. When collapsed AND hovered, expand it back temporarily */
+.main-container.sidebar-collapsed:hover {
+  --sidebar-width: 320px;
+}
+
+/* 4. Style the toggle button */
+.header {
+  position: relative;
+}
+.header-content {
+  transition: opacity 0.2s ease;
+}
+.sidebar-toggle {
+  position: absolute;
+  top: 50%;
+  right: -5px;
+  transform: translateY(-50%);
+  background-color: var(--panel-bg);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0; /* Hide by default */
+  transition: opacity 0.2s ease, right 0.3s ease-in-out;
+}
+.sidebar:hover .sidebar-toggle {
+  opacity: 1; /* Show on sidebar hover */
+}
+.main-container.sidebar-collapsed .sidebar-toggle {
+  right: calc(50% - 16px); /* Center when collapsed */
+}
+
+/* 5. Hide the text when collapsed */
+.nav-text,
+.header-subtitle,
+.header-title {
+  opacity: 1;
+  white-space: nowrap; /* Prevent text from wrapping on shrink */
+  transition: opacity 0.2s ease-in-out;
+}
+
+.main-container.sidebar-collapsed .sidebar .nav-text,
+.main-container.sidebar-collapsed .sidebar .header-subtitle,
+.main-container.sidebar-collapsed .sidebar .header-title {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* 6. Show text again on hover when collapsed */
+.main-container.sidebar-collapsed:hover .sidebar .nav-text,
+.main-container.sidebar-collapsed:hover .sidebar .header-subtitle,
+.main-container.sidebar-collapsed:hover .sidebar .header-title {
+  opacity: 1;
+  transition-delay: 0.15s; /* Delay appearance to feel smoother */
+}
+
+/* 7. Adjust sidebar content alignment when collapsed */
+.sidebar .tab-button, .sidebar .theme-toggle {
+    justify-content: flex-start;
+}
+.main-container.sidebar-collapsed .sidebar .tab-button,
+.main-container.sidebar-collapsed .sidebar .theme-toggle {
+    justify-content: center;
+}
+
+/* Shrink header title when collapsed */
+.main-container.sidebar-collapsed:not(:hover) .header-title {
+    font-size: 0;
+}
