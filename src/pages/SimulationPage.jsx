@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import * as d3 from "d3";
 import { motion, AnimatePresence } from "framer-motion";
-import AnimatedTitle from '../components/AnimatedTitle';
 import {
   ArrowRight,
   Languages,
@@ -155,6 +154,51 @@ const LstmCell = ({ name, isActive }) => (
     </motion.div>
   </motion.div>
 );
+
+// --- NEW STATUS BAR COMPONENT ---
+const StatusBar = ({ phase, step, simulationData }) => {
+  const getStatusMessage = () => {
+    const { inputTokens, outputTokens } = simulationData;
+    switch (phase) {
+      case "idle":
+        return "Idle: Ready for translation.";
+      case "translating":
+        return "Contacting Translation API...";
+      case "encoding":
+        return `Encoding: Processing input token ${step + 1} of ${inputTokens.length}`;
+      case "context":
+        return "Generating Context Vector...";
+      case "decoding":
+        return `Decoding: Generating output token ${step + 1} of ${outputTokens.length}`;
+      case "done":
+        return "Simulation Complete.";
+      default:
+        return "Ready";
+    }
+  };
+
+  return (
+    <motion.div
+      className="status-bar"
+      initial={{ y: "100%" }}
+      animate={{ y: "0%" }}
+      transition={{ ease: "easeInOut", duration: 0.5 }}
+    >
+      <AnimatePresence mode="wait">
+        <motion.span
+          key={getStatusMessage()}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          {getStatusMessage()}
+        </motion.span>
+      </AnimatePresence>
+    </motion.div>
+  );
+};
+
 
 const Visualization = ({ simulationData, step, phase }) => {
   const { inputTokens, outputTokens } = simulationData;
@@ -761,6 +805,13 @@ const SimulationPage = ({ apiKey }) => {
           </motion.div>
         )}
       </AnimatePresence>
+      
+      {/* --- ADDED STATUS BAR TO THE LAYOUT --- */}
+      <StatusBar
+        phase={phase}
+        step={step}
+        simulationData={simulationData}
+      />
     </div>
   );
 };
