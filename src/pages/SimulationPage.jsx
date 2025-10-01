@@ -18,7 +18,7 @@ const getTranslationFromAPI = async (text, fromLang, toLang, apiKey) => {
   if (!apiKey || apiKey === "YOUR_API_KEY_HERE") {
     throw new Error("API Key is missing. Please add your key to the App component.");
   }
-  const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+  const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-001:generateContent?key=${apiKey}`;
   const prompt = `Translate the following text from ${fromLang} to ${toLang}. Return ONLY the translated text and nothing else: "${text}"`;
 
   try {
